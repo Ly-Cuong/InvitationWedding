@@ -279,6 +279,7 @@ body { font-family: 'Lora', serif; color: var(--text); background: var(--cream);
   -webkit-backface-visibility: hidden;
   transform: scale(1) translateZ(0);
   transition: transform 6s linear;
+  image-rendering: -webkit-optimize-contrast;
 }
 .hero-photo-img[src*="3.jpg"] {
   object-position: center 24%;
@@ -504,7 +505,7 @@ body { font-family: 'Lora', serif; color: var(--text); background: var(--cream);
 /* ===========================================================
    3 & 4. PERSON SECTIONS (Chu re / Co dau)
 =========================================================== */
-.person-section { padding: 50px 20px; }
+.person-section { padding: 50px 20px; content-visibility: auto; contain-intrinsic-size: 500px; }
 .groom-section { background: var(--cream-dk); }
 .bride-section { background: var(--cream); }
 
@@ -618,6 +619,8 @@ body { font-family: 'Lora', serif; color: var(--text); background: var(--cream);
   padding: 80px 20px; 
   background: #f8f1e9; 
   border-top: 1px solid rgba(212,175,55,0.1);
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
 }
 
 .timeline-v2 {
@@ -716,7 +719,7 @@ body { font-family: 'Lora', serif; color: var(--text); background: var(--cream);
 /* ===========================================================
    7. GALLERY
 =========================================================== */
-.gallery-section { padding: 30px 20px; background: var(--cream); }
+.gallery-section { padding: 30px 20px; background: var(--cream); content-visibility: auto; contain-intrinsic-size: 600px; }
 
 .gallery-grid {
   max-width: 1200px; margin: 0 auto;
