@@ -31,9 +31,9 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 const HEART_COLORS = [
-  'rgba(200,16,46,VAL)',
-  'rgba(180,10,35,VAL)',
-  'rgba(220,30,60,VAL)',
+  '#c8102e',
+  '#b40a23',
+  '#dc1e3c',
 ];
 
 const HEART_PATH = new Path2D('M0,0 C-5,-5 -10,0 0,8 C10,0 5,-5 0,0 Z');
@@ -54,11 +54,12 @@ function createHeart() {
 }
 
 function drawHeart(h) {
+  ctx.globalAlpha = h.opacity;
   ctx.save();
   ctx.translate(h.x, h.y);
   ctx.rotate(h.rotation);
   ctx.scale(h.size / 10, h.size / 10);
-  ctx.fillStyle = h.colorTpl.replace('VAL', h.opacity);
+  ctx.fillStyle = h.colorTpl; // Using fixed color template without .replace for opacity
   ctx.fill(HEART_PATH);
   ctx.restore();
 }
@@ -219,12 +220,18 @@ function initHeroSlider() {
     track.style.transition = 'none';
   }
 
+  let rafId = null;
   function touchMove(e) {
     if (!isDragging) return;
     const currentX = getPositionX(e);
     const diff = currentX - startX;
-    currentTranslate = prevTranslate + diff;
-    track.style.transform = `translateX(${currentTranslate}px)`;
+    
+    if (rafId) cancelAnimationFrame(rafId);
+    
+    rafId = requestAnimationFrame(() => {
+      currentTranslate = prevTranslate + diff;
+      track.style.transform = `translateX(${currentTranslate}px)`;
+    });
   }
 
   function touchEnd() {
