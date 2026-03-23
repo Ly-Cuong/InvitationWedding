@@ -36,8 +36,10 @@ const HEART_COLORS = [
   'rgba(220,30,60,VAL)',
 ];
 
+const HEART_PATH = new Path2D('M0,0 C-5,-5 -10,0 0,8 C10,0 5,-5 0,0 Z');
+
 function createHeart() {
-  const color = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
+  const colorTpl = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
   return {
     x:        Math.random() * canvas.width,
     y:        -20,
@@ -45,7 +47,7 @@ function createHeart() {
     speed:    0.6 + Math.random() * 1.2,
     drift:    (Math.random() - 0.5) * 0.8,
     opacity:  0.4 + Math.random() * 0.5,
-    color:    color,
+    colorTpl:  colorTpl,
     rotation: Math.random() * Math.PI * 2,
     rotSpeed: (Math.random() - 0.5) * 0.04,
   };
@@ -56,12 +58,8 @@ function drawHeart(h) {
   ctx.translate(h.x, h.y);
   ctx.rotate(h.rotation);
   ctx.scale(h.size / 10, h.size / 10);
-  ctx.fillStyle = h.color.replace('VAL', h.opacity);
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(-5, -5, -10, 0, 0, 8);
-  ctx.bezierCurveTo(10, 0, 5, -5, 0, 0);
-  ctx.fill();
+  ctx.fillStyle = h.colorTpl.replace('VAL', h.opacity);
+  ctx.fill(HEART_PATH);
   ctx.restore();
 }
 
@@ -69,15 +67,23 @@ function animateHearts() {
   if (!heartsRunning) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (Math.random() < HEART_SPAWN_CHANCE && hearts.length < HEART_MAX) hearts.push(createHeart());
+  if (Math.random() < HEART_SPAWN_CHANCE && hearts.length < HEART_MAX) {
+    hearts.push(createHeart());
+  }
 
-  hearts = hearts.filter(h => h.y < canvas.height + 30);
-  hearts.forEach(h => {
-    h.y        += h.speed;
-    h.x        += h.drift;
+  // Optimize filter + loop
+  for (let i = hearts.length - 1; i >= 0; i--) {
+    const h = hearts[i];
+    h.y += h.speed;
+    h.x += h.drift;
     h.rotation += h.rotSpeed;
-    drawHeart(h);
-  });
+
+    if (h.y > canvas.height + 30) {
+      hearts.splice(i, 1);
+    } else {
+      drawHeart(h);
+    }
+  }
 
   requestAnimationFrame(animateHearts);
 }
